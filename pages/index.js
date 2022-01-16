@@ -34,9 +34,9 @@ async function getSchuleAus(day) {
           new Date()
         );
         //endTime = timetable[timetable.length - 1].endTime;
-        let endTime = 'TEST';
-
-        return endTime;
+        //let endTime = 'TEST';
+        //return endTime;
+        return 'Test';
       })
       .then((endTime) => {
         try {
@@ -51,18 +51,18 @@ async function getSchuleAus(day) {
     console.log(error);
   }
 }
+export async function getServerSideProps() {
+  //let get = getSchuleAus(day);
+  endTime = JSON.stringify(await getSchuleAus(day));
+  //let endTime = '17:30';
+  return { props: { endTime } };
+}
 
 function Page({ endTime }) {
   return <h1>Leo kommt um {endTime} nach Hause</h1>;
 }
 
-export async function getServerSideProps() {
-  //let get = getSchuleAus(day);
-  let endTime = JSON.stringify(await getSchuleAus(day));
-  //let endTime = '17:30';
-  return { props: { endTime } };
-}
-console.log('Test');
-console.log('endTime:' + endTime);
+//console.log('Test');
+//console.log('endTime:' + endTime);
 
 export default Page;
