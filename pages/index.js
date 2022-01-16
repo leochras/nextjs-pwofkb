@@ -2,6 +2,7 @@ import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 
 const WebUntis = require('webuntis');
+const { subDays, endOfMonth } = require('date-fns');
 
 const untis = new WebUntis(
   'htbla_kaindorf',
@@ -15,7 +16,7 @@ const untis = new WebUntis(
   'false'
 );
 
-let endTime = 'endTime';
+let endTime = 'no value';
 let day = new Date(2022, 0, 17);
 
 async function getSchuleAus(day) {
@@ -49,23 +50,43 @@ async function getSchuleAus(day) {
       });
   } catch (error) {
     console.log(error);
+    return endTime;
   }
   return endTime;
-}
-
-export async function getServerSideProps() {
-  endTime = await getSchuleAus(day);
-  //endTime = JSON.stringify(await getSchuleAus(day));
-  endTime = JSON.stringify(endTime);
-
-  return { props: { endTime } };
 }
 
 function Page({ endTime }) {
   return <h1>Leo kommt um {endTime} nach Hause</h1>;
 }
 
-//console.log('Test');
-//console.log('endTime:' + endTime);
+export async function getServerSideProps() {
+  await (async function () {
+    const endOfMonthVar = endOfMonth(new Date());
+    const targetDate = subDays(new Date(), 2);
+    try {
+      await untis.login();
+      const x = await untis.validateSession();
+      console.log('Valid session (User/PW): ' + x);
+      //console.log('Session: ' + JSON.stringify(untis.sessionInformation));
+      console.log(
+        'Timetable: ' +
+          JSON.stringify(await untis.getOwnTimetableFor(targetDate))
+      );
+      //endTime = JSON.stringify(await untis.getOwnTimetableFor(targetDate));
+      //console.log('Homework: ' + JSON.stringify(await untis.getHomeWorkAndLessons(new Date(), endOfMonthVar)));
+      //console.log('Rooms: ' + JSON.stringify(await untis.getRooms()));
+      //console.log('News: ' + JSON.stringify(await untis.getNewsWidget(targetDate)));
+    } catch (e) {
+      console.error(e);
+    }
+  })();
+
+  //endTime = JSON.stringify(await getSchuleAus(day));
+  //endTime = 'Test';
+  return { props: { endTime } };
+}
+
+console.log('Test');
+console.log('endTime:' + endTime);
 
 export default Page;
