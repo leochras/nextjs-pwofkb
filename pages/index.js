@@ -15,8 +15,8 @@ const untis = new WebUntis(
   'false'
 );
 
-let endTime;
-let day = new Date(2022, 0, 19);
+let endTime = 'endTime';
+let day = new Date(2022, 0, 17);
 
 async function getSchuleAus(day) {
   console.log('getSchuleAus');
@@ -35,13 +35,13 @@ async function getSchuleAus(day) {
         );
         //endTime = timetable[timetable.length - 1].endTime;
         //let endTime = 'TEST';
-        //return endTime;
-        return 'Test';
+        return endTime;
       })
       .then((endTime) => {
         try {
           console.log('Success');
           console.log(endTime);
+          return endTime;
         } catch (error) {
           endTime = 'Error';
           console.log(error);
@@ -50,11 +50,14 @@ async function getSchuleAus(day) {
   } catch (error) {
     console.log(error);
   }
+  return endTime;
 }
+
 export async function getServerSideProps() {
-  //let get = getSchuleAus(day);
-  endTime = JSON.stringify(await getSchuleAus(day));
-  //let endTime = '17:30';
+  endTime = await getSchuleAus(day);
+  //endTime = JSON.stringify(await getSchuleAus(day));
+  endTime = JSON.stringify(endTime);
+
   return { props: { endTime } };
 }
 
