@@ -13,7 +13,7 @@ const untis = new WebUntis(
   //'cors-anywhere.herokuapp.com/https://mese.webuntis.com/',
   'mese.webuntis.com/',
   'Stackblitz',
-  'false'
+  'true'
 );
 
 let endTime = 'no value';
