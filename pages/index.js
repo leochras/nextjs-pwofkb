@@ -16,11 +16,11 @@ const untis = new WebUntis(
   'true'
 );
 
-let endTime = 'no value';
-let day = new Date(2022, 0, 17);
+let endTime;
+let day = new Date(2022, 1, 25);
 
 async function getSchuleAus(day) {
-  console.log('getSchuleAus');
+  console.log('0');
   try {
     await untis
       .login()
@@ -29,6 +29,7 @@ async function getSchuleAus(day) {
         return untis.getOwnTimetableForRange(day, day);
       })
       .then((timetable) => {
+        console.log('2');
         timetable.sort((a, b) => a.startTime - b.startTime);
         endTime = WebUntis.convertUntisTime(
           timetable[timetable.length - 1].endTime,
@@ -36,22 +37,25 @@ async function getSchuleAus(day) {
         );
         //endTime = timetable[timetable.length - 1].endTime;
         //let endTime = 'TEST';
+        //return endTime;
         return endTime;
       })
       .then((endTime) => {
         try {
-          console.log('Success');
           console.log(endTime);
-          return endTime;
+          console.log(
+            'LastCall in async (stringify): endTime: ' + JSON.stringify(endTime)
+          );
+          //console.log('LastCall in async (parse): endTime: ' + JSON.parse(endTime));
         } catch (error) {
           endTime = 'Error';
           console.log(error);
         }
       });
   } catch (error) {
-    console.log(error);
-    return endTime;
+    console.log('Error in API request: ' + error);
   }
+  //return Promise.all();
   return endTime;
 }
 
@@ -60,33 +64,18 @@ function Page({ endTime }) {
 }
 
 export async function getServerSideProps() {
-  await (async function () {
-    const endOfMonthVar = endOfMonth(new Date());
-    const targetDate = subDays(new Date(), 2);
-    try {
-      await untis.login();
-      const x = await untis.validateSession();
-      console.log('Valid session (User/PW): ' + x);
-      //console.log('Session: ' + JSON.stringify(untis.sessionInformation));
-      console.log(
-        'Timetable: ' +
-          JSON.stringify(await untis.getOwnTimetableFor(targetDate))
-      );
-      //endTime = JSON.stringify(await untis.getOwnTimetableFor(targetDate));
-      //console.log('Homework: ' + JSON.stringify(await untis.getHomeWorkAndLessons(new Date(), endOfMonthVar)));
-      //console.log('Rooms: ' + JSON.stringify(await untis.getRooms()));
-      //console.log('News: ' + JSON.stringify(await untis.getNewsWidget(targetDate)));
-    } catch (e) {
-      console.error(e);
-    }
-  })();
-
+  try {
+    endTime = await getSchuleAus(day);
+    console.log('LastCall endTime: ' + JSON.stringify(endTime));
+  } catch (e) {
+    console.log('Fehler 1234: ' + e);
+    //console.error;
+  }
   //endTime = JSON.stringify(await getSchuleAus(day));
   //endTime = 'Test';
   return { props: { endTime } };
 }
 
-console.log('Test');
-console.log('endTime:' + endTime);
+console.log('endTime:' + { endTime });
 
 export default Page;
