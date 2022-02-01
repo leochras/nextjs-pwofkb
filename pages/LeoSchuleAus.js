@@ -11,7 +11,7 @@ const untis = new WebUntis(
   'Stackblitz'
 );
 
-let endTime = 'kein Wert';
+let endTime = "ungültig";
 let day = new Date(2022, 1, 25);
 
 async function getSchuleAus(day) {
@@ -21,10 +21,12 @@ async function getSchuleAus(day) {
       .login()
       .then(() => {
         console.log('1');
+        console.log(untis.getOwnTimetableForRange(day, day));
         return untis.getOwnTimetableForRange(day, day);
       })
       .then((timetable) => {
         console.log('2');
+        console.log(timetable);
         timetable.sort((a, b) => a.startTime - b.startTime);
         endTime = WebUntis.convertUntisTime(
           timetable[timetable.length - 1].endTime,
@@ -33,15 +35,17 @@ async function getSchuleAus(day) {
         //endTime = timetable[timetable.length - 1].endTime;
         //let endTime = 'TEST';
         //return endTime;
-        return endTime;
+        console.log(2.5);
+        console.log(JSON.stringify(timetable));
       })
       .then((endTime) => {
+        console.log(3);
         try {
-          console.log(endTime);
           console.log(
             'LastCall in async (stringify): endTime: ' + JSON.stringify(endTime)
           );
           //console.log('LastCall in async (parse): endTime: ' + JSON.parse(endTime));
+          return endTime;
         } catch (error) {
           endTime = 'Error';
           console.log(error);
@@ -50,8 +54,7 @@ async function getSchuleAus(day) {
   } catch (error) {
     console.log('Error in API request: ' + error);
   }
-  //return Promise.all();
-  return endTime;
+  //return endTime;
 }
 
 function LeoSchuleAus({ endTime }) {
@@ -59,18 +62,15 @@ function LeoSchuleAus({ endTime }) {
 }
 
 export async function getServerSideProps() {
-  try {
-    endTime = await getSchuleAus(day);
-    console.log('LastCall endTime: ' + JSON.stringify(endTime));
-  } catch (e) {
-    console.log('Fehler 1234: ' + e);
-    //console.error;
-  }
+    //let endTime = JSON.stringify((await getSchuleAus(day)));
+    endTime = "TEST";
+    endTime = JSON.stringify(getSchuleAus(day));
+    //console.log('LastCall endTime: ' + JSON.stringify(await endTime));
   //endTime = JSON.stringify(await getSchuleAus(day));
   //endTime = 'Test';
   return { props: { endTime } };
 }
 
-console.log('endTime:' + { endTime });
+//console.log('endTime:' + endTime);
 
 export default LeoSchuleAus;

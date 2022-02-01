@@ -1,8 +1,4 @@
-import Head from 'next/head';
-import styles from '../styles/Home.module.css';
-
 const WebUntis = require('webuntis');
-const { subDays, endOfMonth } = require('date-fns');
 
 const untis = new WebUntis(
   'htbla_kaindorf',
@@ -13,11 +9,11 @@ const untis = new WebUntis(
   //'cors-anywhere.herokuapp.com/https://mese.webuntis.com/',
   'mese.webuntis.com/',
   'Stackblitz',
-  'true'
+  'false'
 );
 
 let endTime;
-let day = new Date(2022, 1, 25);
+let day = new Date(2022, 0, 24);
 
 async function getSchuleAus(day) {
   console.log('0');
@@ -43,40 +39,31 @@ async function getSchuleAus(day) {
       .then((endTime) => {
         try {
           console.log(endTime);
-          console.log(
-            'LastCall in async (stringify): endTime: ' + JSON.stringify(endTime)
-          );
-          //console.log('LastCall in async (parse): endTime: ' + JSON.parse(endTime));
+          console.log('LastCall in async (stringify): endTime: ' + JSON.stringify(endTime));  
+          //console.log('LastCall in async (parse): endTime: ' + JSON.parse(endTime)); 
         } catch (error) {
           endTime = 'Error';
           console.log(error);
+
         }
       });
   } catch (error) {
-    console.log('Error in API request: ' + error);
+    console.log("Error: " + error);
   }
   //return Promise.all();
-  console.log(untis.getOwnTimetableForRange(day,day));
   return endTime;
 }
 
-function Page({ endTime }) {
-  return <h1>Leo kommt um {endTime} nach Hause</h1>;
-}
-
-export async function getServerSideProps() {
-  try {
-    endTime = await getSchuleAus(day);
-    console.log('LastCall endTime: ' + JSON.stringify(endTime));
-  } catch (e) {
-    console.log('Fehler 1234: ' + e);
-    //console.error;
+async function log() {
+    //endTime = JSON.parse(await getSchuleAus(day));
+    //endTime = JSON.stringify(await getSchuleAus(day));
+    //console.log('LastCall endTime: ' + JSON.stringify(await getSchuleAus(day)));
+      endTime = await getSchuleAus(day);
+      console.log('LastCall endTime: ' + JSON.stringify(endTime));
   }
-  //endTime = JSON.stringify(await getSchuleAus(day));
-  //endTime = 'Test';
-  return { props: { endTime } };
-}
+log();
 
-console.log('endTime:' + { endTime });
 
-export default Page;
+//getSchuleAus(day);
+
+
